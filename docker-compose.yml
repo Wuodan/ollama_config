@@ -7,6 +7,12 @@ services:
     volumes:
       - ollama_models:/root/.ollama
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "ps"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
     deploy:
       resources:
         reservations:
@@ -16,20 +22,28 @@ services:
               capabilities: ["gpu"]
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:cuda
+    image: ghcr.io/open-webui/open-webui:main-slim
+#   image: ghcr.io/open-webui/open-webui:cuda
     container_name: open-webui
     ports:
       - "3000:8080"
+    environment:
+      # Let WebUI reach Ollama by service name inside the bridge network
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_AUTH=false
     volumes:
       - open-webui:/app/backend/data
     restart: unless-stopped
-#     deploy:
-#       resources:
-#         reservations:
-#           devices:
-#             - driver: nvidia
-#               count: all
-#               capabilities: ["gpu"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+#   deploy:
+#     resources:
+#       reservations:
+#         devices:
+#           - driver: nvidia
+#             count: all
+#             capabilities: ["gpu"]
 
 volumes:
   ollama_models:
