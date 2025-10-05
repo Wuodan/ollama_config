@@ -77,3 +77,21 @@ Priority: **small-ish, free models** — quality doesn’t matter, functionality
 - Audio handled separately from Ollama.
 
 ---
+
+## Suggested “minimal lab” pulls
+
+```shell
+# Tools
+docker compose exec ollama ollama pull llama3.1:8b
+docker compose exec ollama ollama pull qwen2.5:7b
+docker compose exec ollama ollama pull hhao/qwen2.5-coder-tools:0.5b
+
+# Vision
+docker compose exec ollama ollama pull qwen2.5-vl:7b
+docker compose exec ollama ollama pull llava-phi3:3.8b
+
+# Embeddings
+docker compose exec ollama ollama pull nomic-embed-text
+docker compose exec ollama ollama pull mxbai-embed-large
+
+```
